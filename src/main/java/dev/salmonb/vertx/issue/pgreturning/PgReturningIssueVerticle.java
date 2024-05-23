@@ -5,6 +5,7 @@ import io.vertx.pgclient.PgBuilder;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.PoolOptions;
+import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Tuple;
 
 import java.util.List;
@@ -44,6 +45,9 @@ public class PgReturningIssueVerticle extends AbstractVerticle {
                         System.out.println("Correct RowSet size");
                     else
                         System.out.println("Incorrect RowSet size: " + rs.size() + " instead of " + batch.size());
+                    for (Row row : rs) {
+                        System.out.println("Returned id = " + row.getValue(0));
+                    }
                 });
     }
 }

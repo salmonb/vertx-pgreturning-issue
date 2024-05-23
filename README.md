@@ -26,6 +26,7 @@ When I run the [Main](src/main/java/dev/salmonb/vertx/issue/pgreturning/Main.jav
 
 ```
 Incorrect RowSet size: 1 instead of 2
+Returned id = 1
 ```
 
 Although 2 rows have been created:
@@ -38,6 +39,6 @@ select * from person;
 | 1 | Julien | Viet |
 | 2 | Emad | Alblueshi |
 
-The Vert.x RowSet returns only 1 row.
+The Vert.x RowSet returns only 1 row, I'm not getting `Returned id = 2`.
 
 Is it a Vert.x bug?
