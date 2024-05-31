@@ -3,10 +3,7 @@ package dev.salmonb.vertx.issue.pgreturning;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.pgclient.PgBuilder;
 import io.vertx.pgclient.PgConnectOptions;
-import io.vertx.sqlclient.Pool;
-import io.vertx.sqlclient.PoolOptions;
-import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.Tuple;
+import io.vertx.sqlclient.*;
 
 import java.util.List;
 
@@ -18,11 +15,11 @@ public class PgReturningIssueVerticle extends AbstractVerticle {
     @Override
     public void start() {
         PgConnectOptions connectOptions = new PgConnectOptions()
-                .setPort(5432)
+                .setPort(6534)
                 .setHost("localhost")
                 .setDatabase("pg_db")
-                .setUser("pg_user")
-                .setPassword("pg_password");
+                .setUser("postgres")
+                .setPassword("ultraboa");
 
         // Pool Options
         PoolOptions poolOptions = new PoolOptions().setMaxSize(5);
@@ -41,13 +38,18 @@ public class PgReturningIssueVerticle extends AbstractVerticle {
                         .executeBatch(batch))
                 .onFailure(System.err::println)
                 .onSuccess(rs -> {
-                    if (rs.size() == batch.size())
+                    int totalRowCount = 0;
+                    for (RowSet<Row> rows = rs; rows != null; rows = rows.next()) {
+                        totalRowCount += rows.size();
+                        for (Row row : rows) {
+                            Object personId = row.getValue(0);
+                            System.out.println("generated key: " + personId);
+                        }
+                    }
+                    if (totalRowCount == batch.size())
                         System.out.println("Correct RowSet size");
                     else
-                        System.out.println("Incorrect RowSet size: " + rs.size() + " instead of " + batch.size());
-                    for (Row row : rs) {
-                        System.out.println("Returned id = " + row.getValue(0));
-                    }
+                        System.out.println("Incorrect RowSet size: " + totalRowCount + " instead of " + batch.size());
                 });
     }
 }
